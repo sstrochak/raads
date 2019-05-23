@@ -51,3 +51,5 @@ count_degrees <- function(question_asked, degree_option) {
 response_data <- map2_df("degree", degrees, count_degrees) %>% 
   rbind(map2_df("field", fields, count_degrees)) %>% 
   rbind(map2_df("process", processes, count_degrees))
+
+rm(count_degrees, degrees, fields, processes)

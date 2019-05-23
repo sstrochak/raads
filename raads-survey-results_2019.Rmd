@@ -1,0 +1,150 @@
+---
+title: ""
+author: ""
+date: "`r format(Sys.time(), '%B %d, %Y %H:%M')`"
+output:
+  html_document:
+    number_sections: false
+    self_contained: TRUE
+    code_folding: hide
+    toc: TRUE
+    toc_float: TRUE
+    css: www/web_report.css
+    editor_options:
+      chunk_output_type: console
+---
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato" />
+
+![](www/images/urban-institute-logo.png)
+
+
+```{r rmarkdown-setup, echo = FALSE}
+knitr::opts_chunk$set(warning = FALSE)
+knitr::opts_chunk$set(message = FALSE)
+```
+
+
+# RAADS Grad School Survey
+
+This year, we sent around a brief survey to better inform the annual RAADS grad school panel. We asked what degrees and programs RAADS were interested in, as well as which part of the process they would most like addresses. We also asked an open ended question on other grad school topics RAADS should address.
+
+```{r setup}
+options(scipen = 999)
+
+library(tidyverse)
+library(urbnthemes)
+
+set_urbn_defaults("print")
+
+source("code/analyze-survey-data.R")
+
+```
+
+
+### Degrees
+ 
+Of the four degrees listed on the survey, `r tolower((filter(response_data, question == "degree") %>% arrange(desc(n)) %>% pull(response))[1])` was the most common degree selected. There was one response outside the set answers, expresseing interest in learning about certificates that could be earned while working at Urban.
+
+```{r degree-plot}
+
+response_data %>% 
+  filter(question == "degree") %>% 
+  ggplot(mapping = aes(x = reorder(response, desc(n)), y = n)) +
+  geom_col() +
+  geom_text(mapping = aes(label = n),
+            vjust = -1, size = 4) +
+  scale_y_continuous(expand = expand_scale(mult = c(0, .1))) +
+  urbnthemes::remove_axis() +
+  labs(x = NULL, y = NULL,
+       title = "What kind of degree(s) are you interested in?")
+
+
+```
+
+### Fields
+
+`r (filter(response_data, question == "field") %>% arrange(desc(n)) %>%  pull(response))[1]` was the most common field RAADS were interested in. `r filter(response_data, response == (filter(response_data, question == "field") %>% arrange(desc(n)) %>%  pull(response))[1]) %>% pull(n)` of `r mean(response_data$total)` total respondents selected it. Second and third place went to `r (filter(response_data, question == "field") %>% arrange(desc(n)) %>%  pull(response))[2]` and `r (filter(response_data, question == "field") %>% arrange(desc(n)) %>%  pull(response))[3]`.
+
+
+```{r field-plot}
+
+annotation_text <- paste0(mean(response_data$total),
+                          " total \n respondents")
+
+response_data %>% 
+  filter(question == "field") %>% 
+  ggplot(mapping = aes(x = reorder(response, desc(n)), y = n)) +
+  geom_col() +
+  geom_text(mapping = aes(label = n),
+            hjust = -.5, size = 3) +
+  scale_y_continuous(expand = expand_scale(mult = c(0, .1)),
+                     limits = c(0, 38)) +
+  geom_hline(aes(yintercept = total),
+             linetype = "dotted") +
+  annotate(geom = "text", x = "Math or statistics", 
+           y = mean(response_data$total) - .5,
+           label = annotation_text,
+           hjust = 1) +
+  coord_flip() +
+  remove_axis(axis = "x", flip = TRUE) +
+  labs(x = NULL, y = NULL,
+       title = "What field(s) are you interested in?") +
+  theme(plot.title = element_text(hjust = -.75))
+
+```
+
+### Process
+
+The survey asked which parts of the process respondents would like advice on. Most RAADS indicated that they were looking for advice on `r tolower((filter(response_data, question == "process") %>% arrange(desc(n)) %>% pull(response))[1])`.
+
+```{r process-plot}
+
+response_data %>% 
+  filter(question == "process") %>% 
+  ggplot(mapping = aes(x = reorder(response, desc(n)), y = n)) +
+  geom_col() +
+  geom_text(mapping = aes(label = n),
+            vjust = -1, size = 4) +
+  scale_y_continuous(expand = expand_scale(mult = c(0, .1))) +
+  urbnthemes::remove_axis() +
+  labs(x = NULL, y = NULL,
+       title = "What part of the process are you looking for advice on?")
+
+
+```
+
+### Other
+
+The following comments were added in addition to the questions posed:
+
+```{r other, results=FALSE}
+
+# make vector of other responses
+other <- c(
+  data %>% 
+  filter(!is.na(other),
+         other != "nope") %>% 
+  pull(other),
+  "Financial trade-offs between stopping work and the value of the degree")
+
+# this is to make sure we use the right number of bullets
+length(other)
+
+```
+* `r other[1]`
+
+* `r other[2]`
+
+* `r other[3]`
+
+* `r other[4]`
+
+* `r other[5]`
+
+* `r other[6]`
+
+* `r other[7]`
+
+* `r other[8]`
+
