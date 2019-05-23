@@ -25,9 +25,10 @@ knitr::opts_chunk$set(message = FALSE)
 ```
 
 
+
 # RAADS Grad School Survey
 
-This year, we sent around a brief survey to better inform the annual RAADS grad school panel. We asked what degrees and programs RAADS were interested in, as well as which part of the process they would most like addresses. We also asked an open ended question on other grad school topics RAADS should address.
+This year, we sent around a brief survey to better inform the annual RAADS grad school panel. The reults of the survey are presented below.
 
 ```{r setup}
 options(scipen = 999)
@@ -37,6 +38,7 @@ library(urbnthemes)
 
 set_urbn_defaults("print")
 
+# load data
 source("code/analyze-survey-data.R")
 
 ```
